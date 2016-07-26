@@ -29,35 +29,45 @@ export default class TabBar extends React.Component{
 		}
 		this._index = 0;
 		this._marginLeft = 0;
+		this._maxMarginLeft = (this.props.children.length - 1) * width;
 	}
 	componentWillMount() {
 		this._panResponder = PanResponder.create({
 			onStartShouldSetPanResponder: e => true,
 			onMoveShouldSetPanResponder: e => true,
 			onPanResponderMove: (e, g) => {
-				// this._isMove = true;
+				this._isMove = true;
 				this._marginLeft = g.dx + (-this._index * width);
 				this._marginLeft > 0 && (this._marginLeft = 0);
 				this._marginLeft < (-this._maxMarginLeft) && (this._marginLeft = -this._maxMarginLeft);
 				this.setState({
-					marginLeftAnim: this._marginLeft
+					marginLeftAnim: new Animated.Value(this._marginLeft)
 				});
 			},
 			onPanResponderRelease: (e, g) => {
-				// if (!this._isMove) return;
-				// this._index -= Math.abs(g.dx) > (width / 4) ? (1 * g.dx > 0 ? 1 : -1) : 0;
-				// this._index < 0 && (this._index = 0);
-				// let len = this.props.children.length - 1;
-				// this._index > len && (this._index = len);
+				if (!this._isMove) return;
+				this._index -= Math.abs(g.dx) > (width / 4) ? (1 * g.dx > 0 ? 1 : -1) : 0;
+				this._index < 0 && (this._index = 0);
+				let len = this.props.children.length - 1;
+				this._index > len && (this._index = len);
 				// this.setState({
-				// 	marginLeftAnim: new Animated.Value(this._marginLeft)
+				// 	marginLeftAnim:new Animated.Value(-this._index*width)
 				// });
-				// Animated.spring(
-				// 	this.state.marginLeftAnim, {
+				this.setState({
+					marginLeftAnim: new Animated.Value(-this._index *width)
+				});
+				// Animated.timing(
+				// 	new Animated.Value(this._marginLeft), {
 				// 		toValue: -this._index * width
 				// 	},
 				// ).start();
-				// this._isMove = false;
+				Animated.spring(new Animated.Value(this._marginLeft), {
+					toValue: -this._index * width, // Returns to the start
+					velocity: 3, // Velocity makes it move
+					tension: -10, // Slow
+					friction: 1, // Oscillate a lot
+				}).start();
+				this._isMove = false;
 			}
 		})
 	}
@@ -65,11 +75,16 @@ export default class TabBar extends React.Component{
 
 	}
 	render(){
-		let maxWidth = this.props.children.length * width;
+		console.log('render');
+		let maxWidth = this._maxMarginLeft + width;
 		return (
 			<View {...this._panResponder.panHandlers} style={{flex:1}}>
-				<Animated.View style={[styles.content,{marginLeft:-10,width:maxWidth,backgroundColor:'red'}]}>
-
+				<Animated.View 
+                    ref={e=>this._view = e}
+                    style={[styles.content,{marginLeft:this.state.marginLeftAnim,width:maxWidth,height:height-55,flexDirection:'row'}]}>
+					{this.props.children && this.props.children.map((v,k)=>{
+                        return <View key={k} style={{flex:1}}>{v.props.children}</View>
+                    })}
 				</Animated.View>
 				<View style={[styles.tabbar,this.props.style]}>
 					{this.props.children && this.props.children.map((e,k)=>{
@@ -128,7 +143,7 @@ const styles = StyleSheet.create({
 		fontSize:12,
 	},
 	content:{
-		flex:1,
-		marginBottom:55
+		// flex:1,
+		// marginBottom:55
 	}
 });
