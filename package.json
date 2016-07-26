@@ -1,0 +1,24 @@
+{
+  "name": "react-native-swiper-tabber",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ITspas/react-native-swiper-tabber.git"
+  },
+  "keywords": [
+    "react-native",
+    "tabbar",
+    "swiper"
+  ],
+  "author": "Netxy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ITspas/react-native-swiper-tabber/issues"
+  },
+  "homepage": "https://github.com/ITspas/react-native-swiper-tabber#readme"
+}
