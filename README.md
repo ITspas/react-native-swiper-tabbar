@@ -1,1 +1,1 @@
-# react-native-swiper-tabber
+# react-native-swiper-tabbar
