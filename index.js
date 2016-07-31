@@ -35,8 +35,7 @@ export default class TabBar extends React.Component {
 	}
 	componentWillMount() {
 		this._panResponder = PanResponder.create({
-			onStartShouldSetPanResponder: e => true,
-			onMoveShouldSetPanResponder: e => true,
+			onMoveShouldSetPanResponder: (evt, g) => Math.abs(g.dx)>Math.abs(g.dy),
 			onPanResponderMove: (e, g) => {
 				this._isMove = true;
 				this._marginLeft = g.dx + (-this._index * width);
@@ -62,6 +61,7 @@ export default class TabBar extends React.Component {
 					}).start();
 				})
 				this._isMove = false;
+
 			}
 		})
 	}
@@ -79,7 +79,7 @@ export default class TabBar extends React.Component {
 			},
 		).start();
 	}
-	render(){
+	render() {
 		let maxWidth = this._maxMarginLeft + width;
 		return (
 			<View {...this._panResponder.panHandlers} style={{flex:1}}>
@@ -100,12 +100,12 @@ export default class TabBar extends React.Component {
 	}
 }
 
-class TabBarItem extends React.Component{
-	onPress(e){
-		this.props.tabbar && this.props.tabbar.scrollTo(this.props.index);// setState({active:this.props.index});
+class TabBarItem extends React.Component {
+	onPress(e) {
+		this.props.tabbar && this.props.tabbar.scrollTo(this.props.index); // setState({active:this.props.index});
 		this.props.onPress && this.props.onPress(this);
 	}
-	render(){
+	render() {
 		return(
 			<View style={styles.item}>
 				<TouchableHighlight onPress={this.onPress.bind(this)} activeOpacity={1} underlayColor='#FFF0'>
@@ -121,32 +121,32 @@ TabBar.Item = TabBarItem;
 
 
 const styles = StyleSheet.create({
-	tabbar:{
-		left:0,
-		right:0,
-		bottom:0,
-		height:55,
-		position:'absolute',
-		flexDirection:'row',
-		backgroundColor:'white',
-		borderTopWidth:1,
-		borderTopColor:'#DDD'
+	tabbar: {
+		left: 0,
+		right: 0,
+		bottom: 0,
+		height: 55,
+		position: 'absolute',
+		flexDirection: 'row',
+		backgroundColor: 'white',
+		borderTopWidth: 1,
+		borderTopColor: '#DDD'
 	},
-	item:{
-		flex:1,
-		alignItems:'center',
-		justifyContent:'center'
+	item: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center'
 	},
-	item_img:{
-		width:32,
-		height:32,
-		marginTop:4,
+	item_img: {
+		width: 32,
+		height: 32,
+		marginTop: 4,
 	},
-	item_txt:{
-		marginTop:2,
-		fontSize:12,
+	item_txt: {
+		marginTop: 2,
+		fontSize: 12,
 	},
-	content:{
+	content: {
 		// flex:1,
 		// marginBottom:55
 	}
