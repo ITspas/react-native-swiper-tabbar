@@ -13,10 +13,12 @@ import {
 
 
 let {
-    width, height
+	width,
+	height
 } = Dimensions.get('window');
 
-export default class TabBar extends React.Component{
+
+export default class TabBar extends React.Component {
 	constructor(props) {
 		super(props);
 		let active = 0;
@@ -50,23 +52,15 @@ export default class TabBar extends React.Component{
 				this._index < 0 && (this._index = 0);
 				let len = this.props.children.length - 1;
 				this._index > len && (this._index = len);
-				// this.setState({
-				// 	marginLeftAnim:new Animated.Value(-this._index*width)
-				// });
 				this.setState({
-					marginLeftAnim: new Animated.Value(-this._index *width)
-				});
-				// Animated.timing(
-				// 	new Animated.Value(this._marginLeft), {
-				// 		toValue: -this._index * width
-				// 	},
-				// ).start();
-				Animated.spring(new Animated.Value(this._marginLeft), {
-					toValue: -this._index * width, // Returns to the start
-					velocity: 3, // Velocity makes it move
-					tension: -10, // Slow
-					friction: 1, // Oscillate a lot
-				}).start();
+					active: this._index,
+					marginLeftAnim: new Animated.Value(this._marginLeft)
+				})
+				setTimeout(() => {
+					Animated.spring(this.state.marginLeftAnim, {
+						toValue: -this._index * width,
+					}).start();
+				})
 				this._isMove = false;
 			}
 		})
@@ -74,8 +68,18 @@ export default class TabBar extends React.Component{
 	componentWillUnmount() {
 
 	}
+	scrollTo(idx) {
+		this._index = idx;
+		this.setState({
+			active: idx
+		})
+		Animated.spring(
+			this.state.marginLeftAnim, {
+				toValue: -this._index * width
+			},
+		).start();
+	}
 	render(){
-		console.log('render');
 		let maxWidth = this._maxMarginLeft + width;
 		return (
 			<View {...this._panResponder.panHandlers} style={{flex:1}}>
@@ -83,7 +87,7 @@ export default class TabBar extends React.Component{
                     ref={e=>this._view = e}
                     style={[styles.content,{marginLeft:this.state.marginLeftAnim,width:maxWidth,height:height-55,flexDirection:'row'}]}>
 					{this.props.children && this.props.children.map((v,k)=>{
-                        return <View key={k} style={{flex:1}}>{v.props.children}</View>
+                        return v.props.children
                     })}
 				</Animated.View>
 				<View style={[styles.tabbar,this.props.style]}>
@@ -98,7 +102,7 @@ export default class TabBar extends React.Component{
 
 class TabBarItem extends React.Component{
 	onPress(e){
-		this.props.tabbar && this.props.tabbar.setState({active:this.props.index});
+		this.props.tabbar && this.props.tabbar.scrollTo(this.props.index);// setState({active:this.props.index});
 		this.props.onPress && this.props.onPress(this);
 	}
 	render(){
