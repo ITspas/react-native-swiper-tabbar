@@ -87,7 +87,7 @@ export default class TabBar extends React.Component {
                     ref={e=>this._view = e}
                     style={[styles.content,{marginLeft:this.state.marginLeftAnim,width:maxWidth,height:height-55,flexDirection:'row'}]}>
 					{this.props.children && this.props.children.map((v,k)=>{
-                        return v.props.children
+                        return <View key={k} style={{flex:1}}>{v.props.children}</View>
                     })}
 				</Animated.View>
 				<View style={[styles.tabbar,this.props.style]}>
